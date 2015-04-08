@@ -3,7 +3,7 @@ Crypto library and demonstration code for ECCSI/ SAKKE (RFC 6507 and 6508)
 
 Overview
 --------
-    This code performs the ECCSI/ Sakke dialogs as defined in RFCs 6507-6509.
+    This code performs the ECCSI/ Sakke dialogs as defined in RFCs 6507-6508.
 
     Output, with DEBUG output on and using RFC values, provides references out
     to the relevant RFCs for cross reference.
