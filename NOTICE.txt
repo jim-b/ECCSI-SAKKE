@@ -1,0 +1,2 @@
+ECCSI/ SAKKE Crypto Library
+Copyright 2015 Jim Buller
