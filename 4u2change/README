@@ -1,0 +1,19 @@
+This directory contains simple implementations of the following functionality:
+
+    PRNG (Pseudo Random Number Generator)
+    MSDB (Mikey-Sakke Database)
+
+I would expect both of these SHOULD be rewritten by users/implementors. Why?
+
+    o PRNG may require to be changed to enforce compliance with specific 
+      policies and/ or mechanisms.
+
+    o MSDB may require to be changed to a specific database or other 
+      storage mechanisms.
+
+I hope that by having these separated out here (i.e. not squirreled away deep 
+inside the rest of the code) gives a clearer indication between 'what you 
+SHOULD change', and, 'what you can look at, but probably don't need to change'.
+
+The simple examples I provide here for PRNG and MSDB are just that, simple 
+examples, i.e. I really haven't spent much time on them.
