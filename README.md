@@ -32,7 +32,7 @@ Making
 ------
     Prep (linux):
         The 'make' script needs to executable and as I'm new to git hub,
-        it doesn't seem immediately obvious how (or even if you can) do 
+        it doesn't seem immediately obvious how to (or even if you can) do 
         this. So, when you've cloned the repo, do:
         
             chmod 775 make
