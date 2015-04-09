@@ -12,10 +12,10 @@ Overview
         o It was/ is a personal project. It could do with a serious amount of 
           code review.
         o There is no interaction with a KMS or peers.
-        o In ec-demo-1 Alice and Bob both have the same ID (that's as per the 
+        o In ec-demo-1 Alice and Bob both have the same ID (that is as per the 
           RFC).
         o In the demo example a predefined message is signed, not the SED. 
-        o It is 'C' and OpenSSL (no other maths libraries), this makes it a tad
+        o It is C and OpenSSL (no other maths libraries), this makes it a tad
           slower, but hopefully more portable. 
 
     Other things to note with this implementation:
@@ -31,9 +31,9 @@ Overview
 Making
 ------
     Prep (linux):
-        The 'make' script needs to executable and as I'm new to git hub,
-        it doesn't seem immediately obvious how to (or even if you can) do 
-        this. So, when you've cloned the repo, do:
+        The make script needs to executable and as I am new to git hub,
+        it does not seem immediately obvious how to (or even if you can) do 
+        this. So, when you have cloned the repo, do:
         
             chmod 775 make
         
@@ -41,7 +41,7 @@ Making
      
         ./make
         
-    Note! It's worth having a read of the make file as well. 
+    Note! It is worth having a read of the make file as well. 
 
 Running
 -------
@@ -51,7 +51,7 @@ Running
 
     Note! You will need to do the following first before running:
               export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:./lib
-          refer to file 'make' for more details.
+          refer to file make for more details.
 
 Doxygen
 -------
