@@ -31,7 +31,7 @@ Overview
 Making
 ------
     Prep (linux):
-        The make script needs to executable and as I am new to git hub,
+        The make script needs to be executable and as I am new to git hub,
         it does not seem immediately obvious how to (or even if you can) do 
         this. So, when you have cloned the repo, do:
         
