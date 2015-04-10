@@ -21,7 +21,7 @@
 #
 # Once made the demo program can be run with:
 #
-#     ./es-demo
+#     ./es-demo-1
 #
 # Other useful notes:
 #
