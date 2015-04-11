@@ -125,8 +125,8 @@ short main_addExampleCommunity() {
     /**************************************************************************/
     /* Clear down                                                             */
     /**************************************************************************/
-    memset(KPAK, 0, sizeof(KPAK));
-    memset(Z,    0, sizeof(Z));
+    memset(KPAK, 0, KPAK_len);
+    memset(Z,    0, Z_len);
 
     return ret_val;
 } /* main_addExampleCommunity */
