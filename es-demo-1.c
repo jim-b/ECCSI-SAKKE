@@ -394,7 +394,6 @@ int main(int argc, char *argv[]) {
     strcpy((char *)bob_id, "2011-02");
     strcat((char *)bob_id+strlen((char*)bob_id)+1, /* +1 NULL separator */
            "tel:+447700900123");
-/*           "tel:+441425629577");*/
     bob_id_len = strlen((char *)bob_id) +
                  strlen((char *)bob_id+(strlen((char *)bob_id)+1))
                  +2; /* Null separator for date+id and NULL terminator. */
