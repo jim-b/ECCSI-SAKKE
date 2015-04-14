@@ -2,7 +2,7 @@
 Crypto library and demonstration code for ECCSI/ SAKKE (RFC 6507 and 6508)
 
 Note! If you are viewing this page on the github web page, there is a wiki
-link on the left hand side of the project screen that provides more details.
+link on the right hand side of the project screen that provides more details.
 
 Overview
 --------
