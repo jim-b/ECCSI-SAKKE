@@ -102,8 +102,8 @@ short main_addExampleCommunity() {
 
     if (!community_store(
         (uint8_t *)"1.0.0",                   /* Optional version */
-        (uint8_t *)"cert1.aliceandbob.co.uk", /* Optional cert_uri */
-        (uint8_t *)"aliceandbob.co.uk",       /* Mandatory kms_uri - community. */
+        (uint8_t *)"aliceandbob.co.uk",       /* Mandatory cert_uri - community*/
+        (uint8_t *)"aliceandbob.co.uk",       /* Mandatory kms_uri  - kms. */
         (uint8_t *)"issuer.aliceandbob.co.uk",/* Optional issuer */
         (uint8_t *)"2011-02-14T00:00:00",     /* Optional valid_from */
         (uint8_t *)"2011-03-13T23:59:59",     /* Optional valid_to */
@@ -125,8 +125,22 @@ short main_addExampleCommunity() {
     /**************************************************************************/
     /* Clear down                                                             */
     /**************************************************************************/
-    memset(KPAK, 0, KPAK_len);
-    memset(Z,    0, Z_len);
+    if (NULL != kpak) {
+        memset(kpak, 0, strlen(kpak));
+        free(kpak);
+    }
+    if (NULL != z) {
+        memset(z,    0, strlen(z));
+        free(z);
+    }
+    if (NULL != KPAK) {
+        memset(KPAK, 0, KPAK_len);
+        free(KPAK);
+    }
+    if (NULL != Z) {
+        memset(Z,    0, Z_len);
+        free(Z);
+    }
 
     return ret_val;
 } /* main_addExampleCommunity */
@@ -627,14 +641,15 @@ int main(int argc, char *argv[]) {
         }
     } 
 
-    /* user_deleteAllUserAccounts();
-     * community_deleteAllCommunities();
-     * ms_deleteParameterSets();
-     */
+    /* Cleanup */
+    community_deleteStorage();
+    ms_deleteParameterSets();
+
     free(alice_id);
     free(bob_id);
     free(ssv_for_bob);  
     free(encapsulated_data);
+    free(signature);
 
     free(message);
     free(community);

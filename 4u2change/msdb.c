@@ -49,7 +49,7 @@
  *
  * @return A pointer to the modified 'in' string.
  ******************************************************************************/
-static uint8_t *utils_stripWS(
+static uint8_t *msdb_stripWS(
     uint8_t *in)
 {
     int count   = 0;
@@ -66,7 +66,7 @@ static uint8_t *utils_stripWS(
         in[cur_pos] = 0;
     }
     return in;
-} /* utils_stripWS */
+} /* msdb_stripWS */
 
 /***************************************************************************//**
  * Cleanup the parsed data (stripping trailing spaces) or indicating the line
@@ -131,7 +131,7 @@ static short parseDataAttribute(
                 /* else ignore comment or blank line. */
             }
             else {
-                utils_stripWS((uint8_t *)&conf_line);
+                msdb_stripWS((uint8_t *)&conf_line);
                 /* Not comment or CRLF */
                 if ((conf_line[0] != ';') && (conf_line[0] != '\n')) {
                     /* Used to allow key:([WS|CRLF])*value, but Secure Chorus 
@@ -149,7 +149,7 @@ static short parseDataAttribute(
                                 continue;
                             }
         
-                            utils_stripWS((uint8_t *)&conf_total);
+                            msdb_stripWS((uint8_t *)&conf_total);
                             if ((strlen(conf_total) > 0) && 
                                        (!strncmp(conf_total, key, strlen(key)))) {
                                 /* Found what we were looking fori. */
@@ -168,7 +168,7 @@ static short parseDataAttribute(
             memset(conf_line, 0, sizeof(conf_line));
         }
 
-        utils_stripWS((uint8_t*)&conf_total);
+        msdb_stripWS((uint8_t*)&conf_total);
         if (strlen(conf_total) > 0) {
             if (!strncmp(conf_total, key, strlen(key))) {
                 strcpy((char *)value, conf_total+(strlen(key)));
@@ -262,7 +262,7 @@ static FILE *openUserFile(
  * @param[in]  str_len  The length of the input octet string.
  * @param[in]  pad      Pad for the output line of the hash.
  ******************************************************************************/
-static void utils_prettyPrintOctetString(
+static void msdb_prettyPrintOctetString(
     uint8_t       *out_line,
     const uint8_t *str,
     const size_t   str_len,
@@ -283,7 +283,7 @@ static void utils_prettyPrintOctetString(
                 (((str[loop])&0xf0)>>4), (str[loop])&0x0f);
     }
     sprintf((char *)&out_line[strlen((char *)out_line)], "\n\n");
-} /* utils_prettyPrintOctetString */
+} /* msdb_prettyPrintOctetString */
 
 /*****************************************************************************/
 /* Community Data Accessor Functions.                                        */
@@ -324,8 +324,8 @@ static void utils_prettyPrintOctetString(
  ******************************************************************************/
 short msdb_communityAdd(
     const uint8_t *version,
-    const uint8_t *cert_uri,
-    const uint8_t *kms_uri,        /* AKA community. */
+    const uint8_t *cert_uri,       /* AKA community. */
+    const uint8_t *kms_uri,
     const uint8_t *issuer,
     const uint8_t *valid_from,
     const uint8_t *valid_to,
@@ -346,14 +346,16 @@ short msdb_communityAdd(
     /* For some reason Secure Chorus doesn't mandate the KMS provide MS
      * parameter set.
      */
-    if (NULL == kms_uri) {
+    /* Mandatory - Absolute minimum */
+    if ((NULL == cert_uri) || (strlen((char *)cert_uri) == 0)) {
+        MSDB_ERROR("%s", "MSDB Community Add, missing mandatory parameter 'CertUri' (community)!");
+    } else if ((NULL == kms_uri) || (strlen((char *)kms_uri) == 0)) {
         MSDB_ERROR("%s", "MSDB Community Add, missing mandatory parameter 'KmsUri' (community)!");
     }
-    /* Mandatory - Absolute minimum */
-    else if (NULL == pub_enc_key) {
+    else if ((NULL == pub_enc_key) || (strlen((char *)pub_enc_key) == 0)) {
         MSDB_ERROR("MSDB Community Add, <%s>, missing mandatory parameter 'PubEncKey' (Z)!",
             kms_uri);
-    } else if (NULL == pub_auth_key) {
+    } else if ((NULL == pub_auth_key) || (strlen((char *)pub_auth_key) == 0)) {
         MSDB_ERROR("MSDB Community Add, <%s>, missing mandatory parameter 'PubAuthKey' (KPAK)!",
             kms_uri);
     }
@@ -364,44 +366,43 @@ short msdb_communityAdd(
         /* Create the temporary file. */
         memset(filename, 0, sizeof(filename));
         snprintf(filename, sizeof(filename), "%s/%s", 
-                 STORAGE_COMMUNITIES_DIRECTORY, kms_uri);
-
+                 STORAGE_COMMUNITIES_DIRECTORY, cert_uri);
         if (NULL == (file_p = fopen(filename, "w"))) {
             MSDB_ERROR("MSDB Community Add, unable to access KmsUri (community) storage <%s>!",
                      kms_uri);
         }
         else {
-            if (NULL != version) {
+            if ((NULL != version) && (strlen((char *)version) > 0)) {
                 snprintf(out_line, sizeof(out_line), 
                          "Version:\n    %s\n\n", version);
                 fwrite(out_line, strlen(out_line), 1, file_p);
             }
-            if (NULL != cert_uri) {
+            if ((NULL != cert_uri) && (strlen((char *)cert_uri) > 0)) {
                 snprintf(out_line, sizeof(out_line),
                          "CertUri:\n    %s\n\n", cert_uri);
                 fwrite(out_line, strlen(out_line), 1, file_p);
             }
-            if (NULL != kms_uri) {
+            if ((NULL != kms_uri) && (strlen((char *)kms_uri) > 0)) {
                 snprintf(out_line, sizeof(out_line), 
                          "KmsUri:\n    %s\n\n", kms_uri);
                 fwrite(out_line, strlen(out_line), 1, file_p);
             }
-            if (NULL != issuer) {
+            if ((NULL != issuer) && (strlen((char *)issuer) > 0)) {
                 snprintf(out_line, sizeof(out_line), 
                          "Issuer:\n    %s\n\n", issuer);
                 fwrite(out_line, strlen(out_line), 1, file_p);
             }
-            if (NULL != valid_from) {
+            if ((NULL != valid_from) && (strlen((char *)valid_from) > 0)) {
                 snprintf(out_line, sizeof(out_line), 
                          "ValidFrom:\n    %s\n\n", valid_from);
                 fwrite(out_line, strlen(out_line), 1, file_p);
             }
-            if (NULL != valid_to) {
+            if ((NULL != valid_to) && (strlen((char *)valid_to) > 0)) {
                 snprintf(out_line, sizeof(out_line), 
                          "ValidTo:\n    %s\n\n", valid_to);
                 fwrite(out_line, strlen(out_line), 1, file_p);
             }
-            if (revoked) {
+            if (revoked > 0) {
                 snprintf(out_line, sizeof(out_line), 
                          "Revoked:\n    %s\n\n", "TRUE");
             } else {
@@ -410,34 +411,34 @@ short msdb_communityAdd(
             }
             fwrite(out_line, strlen(out_line), 1, file_p);
             /* Optional */
-            if (NULL != user_id_format) {
+            if ((NULL != user_id_format) && (strlen((char *)user_id_format) > 0)) {
                 snprintf(out_line, sizeof(out_line), 
                          "UserIdFormat:\n    %s\n\n", user_id_format);
                 fwrite(out_line, strlen(out_line), 1, file_p);
             }
 
             /* Z */
-            if (NULL != pub_enc_key) {
+            if ((NULL != pub_enc_key) && (strlen((char *)pub_enc_key) > 0)) {
                 snprintf(out_line, sizeof(out_line), "PubEncKey:");
                 fwrite(out_line, strlen(out_line), 1, file_p);
                 memset(out_line, 0, sizeof(out_line));
-                utils_prettyPrintOctetString((uint8_t *)&out_line, 
+                msdb_prettyPrintOctetString((uint8_t *)&out_line, 
                     (uint8_t *)pub_enc_key, pub_enc_key_len, 4); 
                 fwrite(out_line, strlen(out_line), 1, file_p);
             }
 
             /* KPAK */
-            if (NULL != pub_auth_key) {
+            if ((NULL != pub_auth_key) && (strlen((char *)pub_auth_key) > 0)) {
                 snprintf(out_line, sizeof(out_line), "PubAuthKey:");
                 fwrite(out_line, strlen(out_line), 1, file_p);
                 memset(out_line, 0, sizeof(out_line));
-                utils_prettyPrintOctetString((uint8_t *)&out_line, 
+                msdb_prettyPrintOctetString((uint8_t *)&out_line, 
                     (uint8_t *)pub_auth_key, pub_auth_key_len, 4); 
                 fwrite(out_line, strlen(out_line), 1, file_p);
             }
 
             /* KMS domain list */
-            if (NULL != kms_domain_list) {
+            if ((NULL != kms_domain_list) && (strlen((char *)kms_domain_list) > 0)) {
                 snprintf(out_line, sizeof(out_line), "KmsDomainList:\n    %s\n\n", kms_domain_list);
                 fwrite(out_line, strlen(out_line), 1, file_p);
             }
@@ -568,6 +569,7 @@ short msdb_communityPurge()
                 }
             }
         }
+        closedir(dir_p);
         ret_val = MSDB_SUCCESS;
     }
 
@@ -618,6 +620,7 @@ uint8_t *msdb_communityList() {
                 }
             }
         }
+        closedir(dir_p);
     }
 
     return communityList;
@@ -656,6 +659,7 @@ uint16_t msdb_communityCount()
                 }
             }
         }
+        closedir(dir_p);
     }
 
     return count;
@@ -1099,25 +1103,25 @@ uint8_t msdb_userAdd(
     char outLine[ES_MAX_LINE_LEN];
     char filename[ES_MAX_DIR_FILE_NAME_LEN];
 
-    if (NULL == user_id) {
+    if ((NULL == user_id) || (strlen((char *)user_id) == 0)) {
         MSDB_ERROR("%s", "MSDB User Add, missing mandatory parameter 'user_id'!");
     } else if (user_id_len != (strlen((char *)user_id) +
                                strlen((char *)user_id  +
                                strlen((char *)user_id)+1)+2)) {
         MSDB_ERROR("%s", "MSDB User Add, User ID is of wrong length!");
-    } else if (NULL == community) {
+    } else if ((NULL == community) || (strlen((char *)community) == 0)) {
         MSDB_ERROR("MSDB User Add, <%s %s>, missing mandatory parameter 'community'!",
             user_id, user_id+strlen((char *)user_id)+1);
-    } else if (NULL == ssk) {
+    } else if ((NULL == ssk) || (strlen((char *)ssk) == 0)) {
         MSDB_ERROR("MSDB User Add, <%s %s %s>, missing mandatory parameter 'ssk'!",
             user_id, user_id+strlen((char *)user_id)+1, community);
-    } else if (NULL == rsk) {
+    } else if ((NULL == rsk) || (strlen((char *)rsk) == 0)) {
         MSDB_ERROR("MSDB User Add, <%s %s %s>, missing mandatory parameter 'rsk'!",
             user_id, user_id+strlen((char *)user_id)+1, community);
-    } else if (NULL == hash) {
+    } else if ((NULL == hash) || (strlen((char *)hash) == 0)) {
         MSDB_ERROR("MSDB User Add, <%s %s %s>, missing mandatory parameter 'hash'!",
             user_id, user_id+strlen((char *)user_id)+1, community);
-    } else if (NULL == pvt) {
+    } else if ((NULL == pvt) || (strlen((char *)pvt) == 0)) {
         MSDB_ERROR("MSDB User Add, <%s %s %s>, missing mandatory parameter 'pvt'!",
             user_id, user_id+strlen((char *)user_id)+1, community);
     } else {
@@ -1133,28 +1137,28 @@ uint8_t msdb_userAdd(
             snprintf(outLine, sizeof(outLine), "SSK:");
             fwrite(outLine, strlen(outLine), 1, file_p);
             memset(outLine, 0, sizeof(outLine));
-            utils_prettyPrintOctetString((uint8_t *)&outLine, 
+            msdb_prettyPrintOctetString((uint8_t *)&outLine, 
                 (uint8_t *)ssk, ssk_len, 4);
             fwrite(outLine, strlen(outLine), 1, file_p);
 
             snprintf(outLine, sizeof(outLine), "RSK:");
             fwrite(outLine, strlen(outLine), 1, file_p);
             memset(outLine, 0, sizeof(outLine));
-            utils_prettyPrintOctetString((uint8_t *)&outLine, 
+            msdb_prettyPrintOctetString((uint8_t *)&outLine, 
                 (uint8_t *)rsk, rsk_len, 4);
             fwrite(outLine, strlen(outLine), 1, file_p);
 
             snprintf(outLine, sizeof(outLine), "HASH:");
             fwrite(outLine, strlen(outLine), 1, file_p);
             memset(outLine, 0, sizeof(outLine));
-            utils_prettyPrintOctetString((uint8_t *)&outLine, 
+            msdb_prettyPrintOctetString((uint8_t *)&outLine, 
                 (uint8_t *)hash, hash_len, 4);
             fwrite(outLine, strlen(outLine), 1, file_p);
 
             snprintf(outLine, sizeof(outLine), "PVT:");
             fwrite(outLine, strlen(outLine), 1, file_p);
             memset(outLine, 0, sizeof(outLine));
-            utils_prettyPrintOctetString((uint8_t *)&outLine, 
+            msdb_prettyPrintOctetString((uint8_t *)&outLine, 
                 (uint8_t *)pvt, pvt_len, 4);
             fwrite(outLine, strlen(outLine), 1, file_p);
 
@@ -1305,6 +1309,7 @@ short msdb_userPurge()
                 }
             }
         }
+        closedir(dir_p);
         ret_val = MSDB_SUCCESS;
     }
     return ret_val;
@@ -1353,6 +1358,7 @@ uint8_t *msdb_userList() {
                 }
             }
         }
+        closedir(dir_p);
     }
 
     return userList;
@@ -1391,6 +1397,7 @@ uint16_t msdb_userCount() {
                 }
             }
         }
+        closedir(dir_p);
     }
 
     return count;

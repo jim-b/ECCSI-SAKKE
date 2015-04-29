@@ -75,6 +75,23 @@ uint8_t eccsi_validateSSK(
     uint8_t       **hash,
     size_t         *hash_len);
 
+/*******************************************************************************
+ * Compute HS = hash( G || KPAK || ID || PVT )
+ * 
+ * Used internally for client side. i.e. if you're a developer you don't need 
+ * this for client development, you only need the 'sign', 'verify' and 
+ * 'validate' functions above. 
+ *
+ * It is only declared here for use by the (demo) KMS code (a separate project)
+ * when that links to this library. 
+ ******************************************************************************/
+uint8_t computeHS(
+    const uint8_t  *community_G,    const size_t community_G_len,
+    const uint8_t  *community_KPAK, const size_t community_KPAK_len,
+    const uint8_t  *user_id,        const size_t user_id_len,
+    const uint8_t  *user_PVT,       const size_t user_PVT_len,
+    uint8_t       **hash_result);
+
 #ifdef __cplusplus
 }
 #endif

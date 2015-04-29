@@ -37,6 +37,11 @@ extern "C" {
 short community_initStorage();
 
 /*******************************************************************************
+ * Delete non file storagei community data.
+ ******************************************************************************/
+void community_deleteStorage();
+
+/*******************************************************************************
  * Returns the number of currently stored communities.
  ******************************************************************************/
 uint8_t community_count();

@@ -46,13 +46,6 @@
 /******************************************************************************/
 /* Forward declarations.                                                      */
 /******************************************************************************/
-static uint8_t computeHS(
-    const uint8_t  *community_G,    const size_t community_G_len,
-    const uint8_t  *community_KPAK, const size_t community_KPAK_len,
-    const uint8_t  *user_id,        const size_t user_id_len,
-    const uint8_t  *user_PVT,       const size_t user_PVT_len,
-    uint8_t       **hash_result);
-
 static uint8_t computeHE(
     const uint8_t  *HS,      const size_t HS_len,
     const uint8_t  *r,       const size_t r_len,
@@ -290,8 +283,7 @@ uint8_t eccsi_sign(
         ES_DEBUG_DISPLAY_BN(ECCSI_SECTION_NAME, 
             "    q (RFC 6507 Appendix A, page 13):", 6, q_bn);
 
-/*        if (!BN_hex2bn(&j_bn, (char *)j_random)) {*/
-        if (!(j_bn = BN_bin2bn((unsigned char *)j_random, j_random_len, NULL))) {
+        if (!(j_bn = BN_bin2bn((unsigned char *)j_random, j_random_len, j_bn))) {
             ES_ERROR("%s'j' BN creation failed!", ECCSI_ERR_SIGN);
             error_encountered = ES_TRUE;
         }
@@ -1525,7 +1517,7 @@ uint8_t eccsi_validateSSK(
  *
  * @return ES_SUCCESS or ES_FAILURE 
  ******************************************************************************/
-static uint8_t computeHS(
+uint8_t computeHS(
     const uint8_t  *community_G,
     const size_t    community_G_len,
     const uint8_t  *community_KPAK,

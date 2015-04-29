@@ -60,6 +60,7 @@ static inline BIGNUM *BN_value_two();
  * @return A BIGNUM of value 3.
  ******************************************************************************/
 static inline BIGNUM *BN_value_three();
+
 static inline void sakke_pointSquare(
     BIGNUM *p,
     BIGNUM *result_x,  BIGNUM *result_y,

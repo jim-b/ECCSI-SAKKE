@@ -153,13 +153,13 @@ short community_initStorage() {
     /*************************************************************************/
     /* Hard coded values. */
     if (!BN_hex2bn(&p_bn, COMMUNITY_p)) {
-        ES_ERROR("%s", "Community Storage Init, could create 'p' BN!");
+        ES_ERROR("%s", "Community Storage Init, could not create 'p' BN!");
         error_encountered = ES_TRUE;
     } else if (!BN_dec2bn(&a_bn, "-3l")) { /* Coefficient of x */
-        ES_ERROR("%s", "Community Storage Init, could create 'a' BN!");
+        ES_ERROR("%s", "Community Storage Init, could not create 'a' BN!");
         error_encountered = ES_TRUE;
     } else if (!BN_hex2bn(&B_bn, COMMUNITY_B)) {
-        ES_ERROR("%s", "Community Storage Init, could create 'B' BN!");
+        ES_ERROR("%s", "Community Storage Init, could not create 'B' BN!");
         error_encountered = ES_TRUE;
     } else if (!(NIST_P256_Curve = EC_GROUP_new_curve_GFp(p_bn, a_bn, B_bn, NULL))) {
         ES_ERROR("%s", "Community Storage Init, error creating NIST_P256_Curve!");
@@ -232,6 +232,22 @@ short community_initStorage() {
 } /* community_initStorage */
 
 /***************************************************************************//**
+ * Delete all non file storage community (global) data.
+ ******************************************************************************/
+void community_deleteStorage() {
+    BN_clear_free(p_bn);
+    BN_clear_free(q_bn);
+    EC_POINT_clear_free(G_point);
+    EC_GROUP_clear_free(NIST_P256_Curve);
+
+    if (NULL != G_string) {
+        memset(G_string, 0, G_string_len);
+        free(G_string);
+    }
+
+} /* community_deleteStorage */
+
+/***************************************************************************//**
  * Stores a new community and associated Mikey Sakke data.
  *
  * Note! Descriptions from Secure Chorus 'KMS Protocol Specification'.
@@ -280,8 +296,8 @@ uint8_t community_store(
 
     return msdb_communityAdd(
                version,
-               cert_uri,
-               kms_uri,        /* AKA community. */
+               cert_uri,       /* AKA community. */
+               kms_uri,
                issuer,
                valid_from,
                valid_to,

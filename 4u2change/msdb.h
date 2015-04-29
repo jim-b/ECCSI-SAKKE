@@ -148,8 +148,8 @@ extern "C" {
  ******************************************************************************/
 short msdb_communityAdd(
     const uint8_t *version,
-    const uint8_t *cert_uri,
-    const uint8_t *kms_uri, /* AKA community */
+    const uint8_t *cert_uri, /* AKA community */
+    const uint8_t *kms_uri, 
     const uint8_t *issuer,
     const uint8_t *valid_from,
     const uint8_t *valid_to,
