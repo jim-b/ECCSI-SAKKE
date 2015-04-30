@@ -73,6 +73,7 @@ Doxygen
         doxygen Doxyfile
 
     Next, web browser and open file 
+        
         file://<path-to-this-dir>/doxygen_output/html/index.html
 
 Contact Details
