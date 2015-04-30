@@ -52,7 +52,7 @@ Running
 -------
     To run:
         ./es-demo-1   -- contains RFC values.
-        ./es-demo-2   -- different (non RFC) Alice and Bob values. (comming soon)
+        ./es-demo-2   -- different (non RFC) Alice and Bob values.
 
     Note! You will need to do the following first before running:
               export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:<path-to-where-you-installed>/lib
