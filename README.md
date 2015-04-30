@@ -17,7 +17,9 @@ Overview
         o There is no interaction with a KMS or peers.
         o In ec-demo-1 Alice and Bob both have the same ID (that is as per the 
           RFC).
-        o In the ec-demo-1 demo example a predefined message is signed, not the encapsulated data. In ec-demo-2 the encapsulated data is signed (as would more likely be the case).
+        o In the ec-demo-1 demo example a predefined message is signed, not 
+          the encapsulated data. In ec-demo-2 the encapsulated data is signed 
+          (as would more likely be the case).
         o It is C and OpenSSL (no other maths libraries), this makes it a tad
           slower, but hopefully more portable. 
 
