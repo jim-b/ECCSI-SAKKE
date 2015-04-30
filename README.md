@@ -23,7 +23,7 @@ Overview
         o It is C and OpenSSL (no other maths libraries), this makes it a tad
           slower, but hopefully more portable. 
 
-    Other things to note with this implementation:<br>
+    Other things to note with this implementation:
         o If you want to turn DEBUG output off, comment out the following line:
               #define ES_OUTPUT_DEBUG
           from src/utils/log.h
