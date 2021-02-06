@@ -76,6 +76,3 @@ Doxygen
         
         file://<path-to-this-dir>/doxygen_output/html/index.html
 
-Contact Details
----------------
-    jim<AT>mikey-sakke.org
