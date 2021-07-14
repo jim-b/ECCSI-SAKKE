@@ -6,7 +6,14 @@ link on the right hand side of the project screen that provides more details.
 
 Update 14/07/2021:
 Made some changes to handle issues with more recent (and strict) GCC and
-openssl. Has been built on CentOS 8.4 with GCC 8.4.1 and openssl 1.1.1g.
+openssl. Has been built on CentOS 8.4 with GCC 8.4.1 and openssl 1.1.1g. I did
+notice when changing over to the new EC_POINT_set_affine_coordinates from
+(the deprecated) EC_POINT_set_affine_coordinates_GFp that the return value 
+indicates an error (1) for curve 'E' but not for the NIST_P256. However, checking
+the structures shows the 'set' worked fine and the results are as expected. The 
+openssl documentation is a little lacking in this area, but maybe (speculation), 
+it's something to do with the curve type? Anyone got any ideas I'd be keen to 
+hear.
 
 Overview
 --------
