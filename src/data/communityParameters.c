@@ -177,15 +177,26 @@ short community_initStorage() {
     if (!error_encountered) {
         if (!(tmp_glen = strlen(COMMUNITY_G))) {
             ES_ERROR("%s", "Community Storage Init, length is 0!");
-        } else if (!(Gx = calloc(1, (tmp_glen/2)+1))) {
-            ES_ERROR("%s", "Community Storage Init, could not allocate space for Gx!");
-        } else if (!(Gy = calloc(1, (tmp_glen/2)+1))) {
-            ES_ERROR("%s", "Community Storage Init, could not allocate space for Gy!");
         } 
+
         /* We don't need to include the '04' start, hence the 2 offset. */
         else {
-            snprintf((char *)Gx, ((tmp_glen-2)/2)+1, "%s", COMMUNITY_G+2);
-            snprintf((char *)Gy, ((tmp_glen-2)/2)+1, "%s", COMMUNITY_G+(2+(tmp_glen-2)/2));
+	    // Switched to strdup as GCC 7+ whinges unnecessarrily about snprintf.
+	    // IMHO if you specify the length and that is less than the target 
+	    // location then that should be sufficient.
+            Gx = (uint8_t *)strndup(COMMUNITY_G+2, (tmp_glen-2)/2);   
+            Gy = (uint8_t *)strndup(COMMUNITY_G+2+((tmp_glen-2)/2), (tmp_glen-2)/2);   
+
+            if (!BN_hex2bn(&Gx_bn,  (char *)Gx)) {
+                ES_ERROR("%s", "Community Storage Init, could create Gx BN!");
+            } else if (!BN_hex2bn(&Gy_bn,  (char *)Gy)) {
+                ES_ERROR("%s", "Community Storage Init, could create Gy BN!");
+            } else if (!(G_point = EC_POINT_new(NIST_P256_Curve))) {
+                ES_ERROR("%s", "Community Storage Init, failed to create G point!");
+            } else if (!EC_POINT_set_affine_coordinates_GFp(NIST_P256_Curve,
+                         G_point, Gx_bn, Gy_bn, NULL)) {
+                ES_ERROR("%s", "Community Storage Init, failed to set 'G' coordinates!");
+            }
 
             if (!BN_hex2bn(&Gx_bn,  (char *)Gx)) {
                 ES_ERROR("%s", "Community Storage Init, could create Gx BN!");

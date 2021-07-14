@@ -286,7 +286,6 @@ uint8_t sakke_generateSakkeEncapsulatedData(
             ES_DEBUG_PRINT_FORMATTED_OCTET_STRING(SAKKE_SECTION_NAME,
                 "    SSV||b (RFC 6508 Appendix A, page 17):", 6, 
                 ssv_concat_b, ssv_concat_b_len);
-
             if (!(r_bn = BN_new())) {
                 ES_ERROR("%screate of BN for 'r' failed!", SAKKE_ERR_GEN_SED);
                 error_encountered = ES_TRUE;
@@ -806,8 +805,8 @@ uint8_t sakke_extractSharedSecret(
             ES_ERROR("%screate of new 'EC_POINT' for 'R' failed!", 
                      SAKKE_ERR_EXT_SED);
             error_encountered = ES_TRUE;
-        } else if (!EC_POINT_set_affine_coordinates_GFp(
-                       ms_curve, R_point, Rx_bn, Ry_bn, bn_ctx)) {
+        } else if (EC_POINT_set_affine_coordinates(
+                       ms_curve, R_point, Rx_bn, Ry_bn, bn_ctx)==0) {
             ES_ERROR("%ssetting of coordinates for 'R' failed!", 
                      SAKKE_ERR_EXT_SED);
             error_encountered = ES_TRUE;
@@ -1163,8 +1162,8 @@ uint8_t sakke_validateRSK(
                      SAKKE_ERR_VAL_RSK);
             error_encountered = ES_TRUE;
         }
-        else if (!(EC_POINT_set_affine_coordinates_GFp(
-                    ms_curve, RSK_point, RSKx_bn, RSKy_bn, NULL))) {
+        else if (EC_POINT_set_affine_coordinates(
+                    ms_curve, RSK_point, RSKx_bn, RSKy_bn, NULL)==0) {
             ES_ERROR("%sunable to set coordinates for 'RSK'!", 
                      SAKKE_ERR_VAL_RSK);
             error_encountered = ES_TRUE;
@@ -1174,7 +1173,6 @@ uint8_t sakke_validateRSK(
                 "   RSK:", 8, ms_curve, RSK_point);
         }
     }
-
     /*************************************************************************/
     /*              START PROCESS AS PER RFC 6508 SECTION 6.1.2              */
     /*************************************************************************/
@@ -1314,7 +1312,7 @@ uint8_t sakke_validateRSK(
  ******************************************************************************/
 static inline BIGNUM *BN_value_two() {
     if (BN_two == NULL) {
-       BN_dec2bn(&BN_two, "2");
+       BN_dec2bn(&BN_two, "2+");
     }
     return BN_two;
 } /* BN_value_two */
@@ -1356,7 +1354,6 @@ static inline void sakke_pointSquare(
     BIGNUM *tmp_Bx2 = NULL;
     BN_CTX *bn_ctx  = BN_CTX_new();
     BN_CTX_start(bn_ctx);
-
     tmp_Ax1 = BN_CTX_get(bn_ctx); 
     tmp_Ax2 = BN_CTX_get(bn_ctx); 
     tmp_Bx1 = BN_CTX_get(bn_ctx); 
@@ -1385,7 +1382,6 @@ static inline void sakke_pointSquare(
     BN_clear_free(tmp_Bx2); 
 
     BN_CTX_end(bn_ctx);
-    BN_CTX_free(bn_ctx);
 
 } /* sakke_pointSquare */
 
@@ -1448,8 +1444,6 @@ static inline void sakke_pointsMultiply(
     BN_clear_free(res_y);
 
     BN_CTX_end(bn_ctx);
-
-    BN_CTX_free(bn_ctx);
 } /* sakke_pointsMultiply */
 
 /***************************************************************************//**
@@ -1460,7 +1454,7 @@ static inline void sakke_pointsMultiply(
  *
  * Readers might be wondering why (as I did) we can't just do something like:
  *
- *     EC_POINT_set_affine_coordinates_GFp(a-group, a-point, x, y, bn_ctx);
+ *     EC_POINT_set_affine_coordinates(a-group, a-point, x, y, bn_ctx);
  *     EC_POINT_mul(a-group, a-point, 0, a-point, BN_value_two(), bn_ctx);
  *     EC_POINT_get_affine_coordinates_GFp(-agroup, a-point, x, y, bn_ctx);
  *     EC_GROUP_free(a-group);
@@ -1539,7 +1533,6 @@ static inline void sakke_pointMultiply(
     BN_clear_free(EARx);
     BN_clear_free(EARy);
     BN_CTX_end(bn_ctx);
-    BN_CTX_free(bn_ctx);
 
 } /* sakke_pointMultiply */
 
@@ -1623,8 +1616,6 @@ static inline void sakke_pointsAdd(
 
     BN_CTX_end(bn_ctx);
 
-    BN_CTX_free(bn_ctx);
-
 } /* sakke_pointsAdd */
 
 /***************************************************************************//**
@@ -1672,6 +1663,7 @@ static inline uint8_t sakke_pointExponent(
     /**************************************************************************/
     /* Cleanup.                                                               */
     /**************************************************************************/
+    //BN_CTX_end(bn_ctx);
     BN_CTX_free(bn_ctx);
 
     return ret_val;
@@ -1711,7 +1703,6 @@ static uint8_t sakke_computeTLPairing(
     BIGNUM *T_x1_bn        = NULL;
     BIGNUM *T_x2_bn        = NULL;
     BIGNUM *t_bn           = NULL;
-    BN_CTX *tmp_ctx        = NULL;
     size_t  N              = 0;
 
     BN_CTX *bn_ctx = BN_CTX_new();
@@ -1755,7 +1746,6 @@ static uint8_t sakke_computeTLPairing(
     /* for bits of q-1, starting with second most significant
      * bit, ending with the least significant bit, do
      */
-    tmp_ctx = BN_CTX_new();
     for (; N != 0; --N) {
         sakke_pointSquare(p_bn, Vx_bn, Vy_bn, Vx_bn, Vy_bn);
 
@@ -1839,10 +1829,7 @@ static uint8_t sakke_computeTLPairing(
     BN_clear_free(t_bn);
 
     if (bn_ctx  != NULL) { 
-        BN_CTX_free(bn_ctx);
-    }
-    if (tmp_ctx != NULL) { 
-        BN_CTX_free(tmp_ctx);
+      BN_CTX_free(bn_ctx);
     }
 
     return ret_val;

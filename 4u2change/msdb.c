@@ -52,7 +52,7 @@
 static uint8_t *msdb_stripWS(
     uint8_t *in)
 {
-    int count   = 0;
+    unsigned int count   = 0;
     int cur_pos = 0;
 
     if (in != NULL) {
@@ -241,9 +241,11 @@ static FILE *openUserFile(
         MSDB_ERROR("%s", "MSDB Open User File, no community specified!");
     } else {
         memset(filename, 0, sizeof(filename));
-        snprintf(filename, sizeof(filename), "%s/%s %s %s",
+        if (snprintf(filename, sizeof(filename), "%s/%s %s %s",
                  STORAGE_USERS_DIRECTORY,
-                 user_id, user_id+(strlen((char *)user_id)+1), community);
+                 user_id, user_id+(strlen((char *)user_id)+1), community) < 0) {
+            MSDB_ERROR("Filename overrrun");
+	}
 
         if (NULL == (fp = fopen(filename, "r"))) {
             MSDB_ERROR("MSDB Open User File, unable to access user data <%s>!",

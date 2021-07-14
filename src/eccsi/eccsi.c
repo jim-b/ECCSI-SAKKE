@@ -96,7 +96,7 @@ uint8_t eccsi_sign(
 {
     uint8_t         ret_val      = ES_FAILURE;
     short           error_encountered = ES_FALSE;
-    uint8_t         tmp_res      = 0;
+//    uint8_t         tmp_res      = 0;
 
     /* Octet Strings */
     uint8_t        *kpak         = NULL;
@@ -237,8 +237,8 @@ uint8_t eccsi_sign(
             ES_ERROR("%sunable to create Point 'PVT' on Curve 'NIST'!", 
                      ECCSI_ERR_SIGN);
             error_encountered = ES_TRUE;
-        } else if (!(EC_POINT_set_affine_coordinates_GFp(nist_curve,
-                      PVT_point, pvt_x_bn, pvt_y_bn, bn_ctx))) {
+        } else if (EC_POINT_set_affine_coordinates(nist_curve,
+                      PVT_point, pvt_x_bn, pvt_y_bn, bn_ctx)==0) {
             ES_ERROR("%sunable to set coordinates for 'PVT'!", ECCSI_ERR_SIGN);
             error_encountered = ES_TRUE;
         } else {  
@@ -390,7 +390,6 @@ uint8_t eccsi_sign(
                         (char *)hash_result, community_N);
                 }
             }
-            tmp_res = 0;
         }
     }
 
@@ -615,6 +614,7 @@ uint8_t eccsi_sign(
     /* BN Context */
     if (NULL != bn_ctx) {
        BN_CTX_free(bn_ctx);
+       bn_ctx = NULL;
     }
 
     return ret_val;
@@ -791,9 +791,12 @@ uint8_t eccsi_verify(
             ES_ERROR("%sunable to create Point 'PVT' on Curve 'E'!", 
                      ECCSI_ERR_VERIFY);
             error_encountered = ES_TRUE;
-        } else if (!(EC_POINT_set_affine_coordinates_GFp(
+        } else if (EC_POINT_set_affine_coordinates(
                      ms_curve, pvt_ms_point, 
-                     pvt_x_bn, pvt_y_bn, bn_ctx))) {
+                     pvt_x_bn, pvt_y_bn, bn_ctx)==1) {
+            /* Note! For some reason set_affine_coords does not return 0 when
+             * we use curve 'E', but the data looks OK if you check the coords.
+             */
             ES_ERROR("%sunable to set coordinates for 'PVT'!", 
                      ECCSI_ERR_VERIFY);
             error_encountered = ES_TRUE;
@@ -920,8 +923,8 @@ uint8_t eccsi_verify(
             /* Below - use same co-ordinates as previously obtained above 
              * for PVTx_bn and PVTy_bn. 
              */
-            else if (!(EC_POINT_set_affine_coordinates_GFp(nist_curve, 
-                         pvt_nist_point, pvt_x_bn, pvt_y_bn, bn_ctx))) {
+            else if (EC_POINT_set_affine_coordinates(nist_curve, 
+                         pvt_nist_point, pvt_x_bn, pvt_y_bn, bn_ctx)==0) {
                 ES_ERROR("%sunable to set coordinates for 'PVT'!", 
                          ECCSI_ERR_VERIFY);
                 error_encountered = ES_TRUE;
@@ -1096,6 +1099,7 @@ uint8_t eccsi_verify(
     }
 
     BN_CTX_free(bn_ctx);
+    bn_ctx = NULL;
 
     return ret_val;
 
@@ -1204,6 +1208,7 @@ uint8_t eccsi_validateSSK(
         error_encountered = ES_TRUE;
     }
 
+
     /**************************************************************************/
     /* Init                                                                   */
     /**************************************************************************/
@@ -1246,6 +1251,7 @@ uint8_t eccsi_validateSSK(
                  ECCSI_SECTION_NAME);
         ES_DEBUG("%s     - will fail if not on curve", ECCSI_SECTION_NAME);
 
+
         /* Create a point on the curve 'E'. */
         if (1 != (ms_param_set = community_get_paramSet(community))) {
             ES_ERROR("%sMS Parameter != 1 <%d> not supported", 
@@ -1257,16 +1263,19 @@ uint8_t eccsi_validateSSK(
         } else if (!(PVTy_bn = BN_bin2bn(PVT+1+(PVT_len/2), PVT_len/2, NULL))) {
             ES_ERROR("%sunable to create PVTy BN!", ECCSI_ERR_VAL_SSK);
             error_encountered = ES_TRUE;
-        } else if (!(P_point = EC_POINT_new(
-                      ms_getParameter_E(ms_param_set)))) {
+        } else if (!(P_point = EC_POINT_new(ms_getParameter_E(ms_param_set)))) {
             ES_ERROR("%sunable to create Point 'P' on Curve 'E'!", 
                      ECCSI_ERR_VAL_SSK);
             error_encountered = ES_TRUE;
-        } else if (!(EC_POINT_set_affine_coordinates_GFp(
+        } else if (EC_POINT_set_affine_coordinates(
                       ms_getParameter_E(ms_param_set), 
-                          P_point, PVTx_bn, PVTy_bn, bn_ctx))) {
+                          P_point, PVTx_bn, PVTy_bn, bn_ctx)==1) {
+            /* Note! For some reason set_affine_coords does not return 0 when
+             * we use curve 'E', but the data looks OK if you check the coords.
+             */
             ES_ERROR("%sunable to set coordinates for 'P'!", ECCSI_ERR_VAL_SSK);
             error_encountered = ES_TRUE;
+
         } else {
             ES_DEBUG_DISPLAY_AFFINE_COORDS(ECCSI_SECTION_NAME,
                 "    PVT (RFC 6507 Appendix A, page 14):", 6, 
@@ -1359,8 +1368,8 @@ uint8_t eccsi_validateSSK(
             ES_ERROR("%sunable to create Point 'PVT' on Curve 'NIST'!", 
                      ECCSI_ERR_VAL_SSK);
             error_encountered = ES_TRUE;
-        } else if (!(EC_POINT_set_affine_coordinates_GFp(nist_curve,
-                      PVT_point, PVTx_bn, PVTy_bn, bn_ctx))) {
+        } else if (EC_POINT_set_affine_coordinates(nist_curve,
+                      PVT_point, PVTx_bn, PVTy_bn, bn_ctx)==0) {
             ES_ERROR("%sunable to set coordinates for 'P'!", ECCSI_ERR_VAL_SSK);
             error_encountered = ES_TRUE;
         }

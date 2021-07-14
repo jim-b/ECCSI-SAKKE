@@ -29,11 +29,16 @@ extern "C" {
 
 #include "utils.h"
 
-#define ES_MAX_LOG_LINE 1024 /*!< Maximum log output line length. */
+#define ES_MAX_LOG_LINE 1200 /*!< Maximum log output line length, increased for GCC7+ warnings. */
 
 #define ES_OUTPUT_DEBUG /*!< Comment this line out to disable DEBUG output at 
                          *   compilation. 
                          */
+
+/* Added to handle later GCC7+ compiler errors. */
+#ifndef __FUNCTION__
+#define __FUNCTION__ __func__ 
+#endif
 
 /***************************************************************************//**
  * Log type identifiers.

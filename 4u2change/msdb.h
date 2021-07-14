@@ -104,7 +104,7 @@ extern "C" {
 #include <stdint.h>
 #include <string.h>
 
-#define MSDB_MAX_LOG_LINE 1024       /*!< The maximum length for log output. */
+#define MSDB_MAX_LOG_LINE 1200       /*!< The maximum length for log output, increased for GCC7+ compiler warnings. */
 
 /* Matches ES_TRUE/ ES_FALSE */
 #ifndef MSDB_TRUE

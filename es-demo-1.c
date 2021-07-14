@@ -377,7 +377,6 @@ int main(int argc, char *argv[]) {
     uint8_t       *alice_ssv                = NULL;
     size_t         alice_ssv_len            = 16;
 
-    uint8_t        res_verify               = 0;
     uint8_t       *message                  = NULL;
     size_t         message_len              = 0;
     uint8_t       *signature                = NULL;
@@ -477,7 +476,6 @@ int main(int argc, char *argv[]) {
      */
     message_len = strlen((char *)message)+1; 
     signature   = NULL;
-    res_verify  = 0;
 
     /* If you want to repeat/ test this code, for instance with non RFC values
      * you can modify the characteristics of this loop and comment out
@@ -579,7 +577,6 @@ int main(int argc, char *argv[]) {
         ES_INFO_PRINT_FORMATTED_OCTET_STRING(ES_MAIN_SECTION_NAME,
             "     SSV created/ used by Alice:", 7, alice_ssv, alice_ssv_len);
 #endif /* ES_USE_RFC_VALUES */
-
         if (sakke_generateSakkeEncapsulatedData(
                 &encapsulated_data, &encapsulated_data_length, 
                 /* Use the receiver's ID */
@@ -644,7 +641,6 @@ int main(int argc, char *argv[]) {
     /* Cleanup */
     community_deleteStorage();
     ms_deleteParameterSets();
-
     free(alice_id);
     free(bob_id);
     free(ssv_for_bob);  

@@ -33,7 +33,7 @@ extern "C" {
 #include <stdint.h>
 #include <string.h>
 
-#define SOFTWARE_VERSION "0.0.2" /*!< Current Code Version  */
+#define SOFTWARE_VERSION "0.0.3" /*!< Current Code Version  */
 
 #ifndef ES_TRUE
 #define ES_TRUE 1                /*!< Global TRUE value.    */
