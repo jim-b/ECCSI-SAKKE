@@ -4,6 +4,10 @@ Crypto library and demonstration code for ECCSI/ SAKKE (RFC 6507 and 6508)
 Note! If you are viewing this page on the github web page, there is a wiki
 link on the right hand side of the project screen that provides more details.
 
+Update 14/07/2021:
+Made some changes to handle issues with more recent (and strict) GCC and
+openssl. Has been built on CentOS 8.4 with GCC 8.4.1 and openssl 1.1.1g.
+
 Overview
 --------
     This code performs the ECCSI/ Sakke dialogs as defined in RFCs 6507-6508.
