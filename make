@@ -86,13 +86,13 @@ gcc -shared -o ./lib/libescrypt.so \
 gcc -Wall -O3 --pedantic -Wno-variadic-macros \
     -I./inc -I./4u2change -I./src/utils -I./src/sakke -I./src/eccsi -I./src/data \
     -L/usr/lib64 -L/usr/lib32 -L./lib \
-    -lssl -lcrypto \
-    -lesprng -lesdata -lescrypt \
-    es-demo-1.c -o es-demo-1
+    es-demo-1.c \
+    -lescrypt -lesprng -lesdata -lssl -lcrypto \
+    -o es-demo-1
 
 gcc -Wall -O3 --pedantic -Wno-variadic-macros \
     -I./inc -I./4u2change -I./src/utils -I./src/sakke -I./src/eccsi -I./src/data \
     -L/usr/lib64 -L/usr/lib32 -L./lib \
-    -lssl -lcrypto \
-    -lesprng -lesdata -lescrypt \
-    es-demo-2.c -o es-demo-2
+    es-demo-2.c \
+    -lescrypt -lesprng -lesdata -lssl -lcrypto \
+    -o es-demo-2

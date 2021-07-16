@@ -185,7 +185,7 @@ short main_addExampleUserCharlie() {
                         /* 2 is for NULL separator plus NULL termninal as 
                          * per RFC 6507 Appendix A, Page 13, 'ID'.
                          */
-    id            = calloc(1, id_len);
+    id            = (uint8_t *)calloc(1, id_len);
     strcpy((char *)id, (char *)date);
     strcat((char *)id+strlen((char *)id)+1, (char *)uri);
 
@@ -334,7 +334,7 @@ short main_addExampleUserDylan() {
                         /* 2 is for NULL separator plus NULL termninal as 
                          * per RFC 6507 Appendix A, Page 13, 'ID'.
                          */
-    id            = calloc(1, id_len);
+    id            = (uint8_t *)calloc(1, id_len);
     strcpy((char *)id, (char *)date);
     strcat((char *)id+strlen((char *)id)+1, (char *)uri);
 
@@ -534,14 +534,14 @@ int main(int argc, char *argv[]) {
     /**************************************************************************/
     /* Set up user id's - Note the RFC use the same ID for Alice and Bob..    */
     /**************************************************************************/
-    charlie_id = calloc(1, 255); /* Some space */
+    charlie_id = (uint8_t *)calloc(1, 255); /* Some space */
     strcpy((char *)charlie_id, "2015-04");
     strcat((char *)charlie_id+strlen((char *)charlie_id)+1, "tel:+441111111111");
     charlie_id_len = strlen((char *)charlie_id) +
                      strlen((char *)charlie_id+(strlen((char *)charlie_id)+1))
                      +2; /* Null separator for date+id and NULL terminator. */
 
-    dylan_id = calloc(1, 255); /* Some space */
+    dylan_id = (uint8_t *)calloc(1, 255); /* Some space */
     strcpy((char *)dylan_id, "2015-04");
     strcat((char *)dylan_id+strlen((char*)dylan_id)+1, "tel:+442222222222");
     dylan_id_len = strlen((char *)dylan_id) +
