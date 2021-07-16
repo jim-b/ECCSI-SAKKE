@@ -15,6 +15,10 @@ openssl documentation is a little lacking in this area, but maybe (speculation),
 it's something to do with the curve type? Anyone got any ideas I'd be keen to 
 hear.
 
+Update 16/07/2021:
+Sorted out some memory leaks, mainly related the use of BN_CTX_start and other
+tidy ups.
+
 Overview
 --------
     This code performs the ECCSI/ Sakke dialogs as defined in RFCs 6507-6508.
