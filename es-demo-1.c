@@ -481,7 +481,7 @@ int main(int argc, char *argv[]) {
      * you can modify the characteristics of this loop and comment out
      * ES_USE_RFC_VALUES at the start of this file.
      */
-    for (loop=0; loop < 100; loop++) {
+    for (loop=0; loop < 1; loop++) {
         ES_INFO("%s  Counter <%d>", ES_MAIN_SECTION_NAME, loop);
 
         /* The message to send to Bob (RFC 6507 Appendix A, page 14) */
