@@ -1530,6 +1530,15 @@ static inline void sakke_pointMultiply(
     BN_clear_free(EARy);
     BN_CTX_free(bn_ctx);
 
+    /* Note!
+     *
+     * If you wish you can delete/ comment-out the following two lines if you
+     * like. They are included to ensure that valgrind's heap check shows BN_two 
+     * and BN_three have been cleared.
+     */
+    BN_clear_free(BN_two);   BN_two   = NULL;
+    BN_clear_free(BN_three); BN_three = NULL;
+
 } /* sakke_pointMultiply */
 
 /***************************************************************************//**
@@ -1822,6 +1831,15 @@ static uint8_t sakke_computeTLPairing(
     BN_clear_free(t_bn);
 
     BN_CTX_free(bn_ctx);
+
+    /* Note!
+     *
+     * If you wish you can delete/ comment-out the following two lines if you
+     * like. They are included to ensure that valgrind's heap check shows BN_two 
+     * and BN_three have been cleared.
+     */
+    BN_clear_free(BN_two);   BN_two   = NULL;
+    BN_clear_free(BN_three); BN_three = NULL;
 
     return ret_val;
 } /* sakke_computeTLPairing */
