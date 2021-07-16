@@ -484,7 +484,7 @@ EC_POINT *user_getRSKpoint(
                     ES_ERROR("%s", "User Storage Get RSK Point, error retrieving 'E' Curve!");
                 } else if (!(RSKpoint = EC_POINT_new(ms_curve))) {
                     ES_ERROR("%s", "Community Storage Get RSK Point, failed to create RSK point!");
-                } else if (!EC_POINT_set_affine_coordinates_GFp(ms_curve,
+                } else if (!EC_POINT_set_affine_coordinates(ms_curve,
                              RSKpoint, RSK_x, RSK_y, NULL)) {
                     ES_ERROR("%s", "Community Storage Get RSK Point, failed to set RSK coordinates!");
                 }

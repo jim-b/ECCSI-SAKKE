@@ -193,18 +193,7 @@ short community_initStorage() {
                 ES_ERROR("%s", "Community Storage Init, could create Gy BN!");
             } else if (!(G_point = EC_POINT_new(NIST_P256_Curve))) {
                 ES_ERROR("%s", "Community Storage Init, failed to create G point!");
-            } else if (!EC_POINT_set_affine_coordinates_GFp(NIST_P256_Curve,
-                         G_point, Gx_bn, Gy_bn, NULL)) {
-                ES_ERROR("%s", "Community Storage Init, failed to set 'G' coordinates!");
-            }
-
-            if (!BN_hex2bn(&Gx_bn,  (char *)Gx)) {
-                ES_ERROR("%s", "Community Storage Init, could create Gx BN!");
-            } else if (!BN_hex2bn(&Gy_bn,  (char *)Gy)) {
-                ES_ERROR("%s", "Community Storage Init, could create Gy BN!");
-            } else if (!(G_point = EC_POINT_new(NIST_P256_Curve))) {
-                ES_ERROR("%s", "Community Storage Init, failed to create G point!");
-            } else if (!EC_POINT_set_affine_coordinates_GFp(NIST_P256_Curve, 
+            } else if (!EC_POINT_set_affine_coordinates(NIST_P256_Curve, 
                          G_point, Gx_bn, Gy_bn, NULL)) {
                 ES_ERROR("%s", "Community Storage Init, failed to set 'G' coordinates!");
             }
@@ -246,10 +235,18 @@ short community_initStorage() {
  * Delete all non file storage community (global) data.
  ******************************************************************************/
 void community_deleteStorage() {
-    BN_clear_free(p_bn);
-    BN_clear_free(q_bn);
-    EC_POINT_clear_free(G_point);
-    EC_GROUP_clear_free(NIST_P256_Curve);
+    if (p_bn != NULL) {
+        BN_clear_free(p_bn);
+    }
+    if (q_bn != NULL) {
+        BN_clear_free(q_bn);
+    }
+    if (G_point != NULL) {
+        EC_POINT_clear_free(G_point);
+    }
+    if (NIST_P256_Curve != NULL) {
+        EC_GROUP_clear_free(NIST_P256_Curve);
+    }
 
     if (NULL != G_string) {
         memset(G_string, 0, G_string_len);
@@ -606,7 +603,7 @@ EC_POINT *community_getKPAK_point(
                     ES_ERROR("%s", "Community Storage Get KPAK Point, error retrieving NIST_P256_Curve!");
                 } else if (!(KPAK_point = EC_POINT_new(nist_curve))) {
                     ES_ERROR("%s", "Community Storage Get KPAK Point, failed to create KPAK point!");
-                } else if (!EC_POINT_set_affine_coordinates_GFp(nist_curve,
+                } else if (!EC_POINT_set_affine_coordinates(nist_curve,
                             KPAK_point, KPAK_x, KPAK_y, NULL)) { 
                     ES_ERROR("%s", "Community Storage Get KPAK Point, failed to set KPAK coordinates!");
                 }
@@ -691,7 +688,7 @@ EC_POINT *community_getZ_point(
                     ES_ERROR("%s", "Community Storage Get Z Point, error retrieving Curve 'E'!");
                 } else if (!(Z_point = EC_POINT_new(ms_curve))) {
                     ES_ERROR("%s", "Community Storage Get Z Point, failed to create Z point!");
-                } else if (!EC_POINT_set_affine_coordinates_GFp(ms_curve,
+                } else if (!EC_POINT_set_affine_coordinates(ms_curve,
                             Z_point, Z_x, Z_y, NULL)) {
                     ES_ERROR("%s", "Community Storage Get Z Point, failed to set Z coordinates!");
                 }

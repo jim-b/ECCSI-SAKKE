@@ -200,7 +200,7 @@ short ms_initParameterSets() {
             if (NULL != ms_parameter_sets[c].E) {
 
                 ms_parameter_sets[c].P = EC_POINT_new(ms_parameter_sets[c].E);
-                if (EC_POINT_set_affine_coordinates_GFp(
+                if (EC_POINT_set_affine_coordinates(
                     ms_parameter_sets[c].E,
                     ms_parameter_sets[c].P,
                     ms_parameter_sets[c].Px,

@@ -1353,11 +1353,11 @@ static inline void sakke_pointSquare(
     BIGNUM *tmp_Bx1 = NULL;
     BIGNUM *tmp_Bx2 = NULL;
     BN_CTX *bn_ctx  = BN_CTX_new();
-    BN_CTX_start(bn_ctx);
-    tmp_Ax1 = BN_CTX_get(bn_ctx); 
-    tmp_Ax2 = BN_CTX_get(bn_ctx); 
-    tmp_Bx1 = BN_CTX_get(bn_ctx); 
-    tmp_Bx2 = BN_CTX_get(bn_ctx); 
+
+    tmp_Ax1 = BN_new(); 
+    tmp_Ax2 = BN_new(); 
+    tmp_Bx1 = BN_new(); 
+    tmp_Bx2 = BN_new(); 
 
     BN_copy(tmp_Ax1, point_x);
     BN_copy(tmp_Ax2, point_y);
@@ -1381,7 +1381,7 @@ static inline void sakke_pointSquare(
     BN_clear_free(tmp_Bx1); 
     BN_clear_free(tmp_Bx2); 
 
-    BN_CTX_end(bn_ctx);
+    BN_CTX_free(bn_ctx);
 
 } /* sakke_pointSquare */
 
@@ -1415,11 +1415,9 @@ static inline void sakke_pointsMultiply(
     BIGNUM *res_y  = NULL;
     BN_CTX *bn_ctx = BN_CTX_new();
 
-    BN_CTX_start(bn_ctx);
-
-    tmp   = BN_CTX_get(bn_ctx);
-    res_x = BN_CTX_get(bn_ctx);
-    res_y = BN_CTX_get(bn_ctx);
+    tmp   = BN_new();
+    res_x = BN_new();
+    res_y = BN_new();
 
     /* X1 */
     BN_mul(res_x, point_1_x, point_2_x, bn_ctx); 
@@ -1443,7 +1441,7 @@ static inline void sakke_pointsMultiply(
     BN_clear_free(res_x);
     BN_clear_free(res_y);
 
-    BN_CTX_end(bn_ctx);
+    BN_CTX_free(bn_ctx);
 } /* sakke_pointsMultiply */
 
 /***************************************************************************//**
@@ -1484,13 +1482,11 @@ static inline void sakke_pointMultiply(
     BIGNUM *EARy      = NULL;
     BN_CTX *bn_ctx    = BN_CTX_new();
 
-    BN_CTX_start(bn_ctx);
-
-    lambda    = BN_CTX_get(bn_ctx);
-    lambda_sq = BN_CTX_get(bn_ctx);
-    EAT1      = BN_CTX_get(bn_ctx);
-    EARx      = BN_CTX_get(bn_ctx);
-    EARy      = BN_CTX_get(bn_ctx);
+    lambda    = BN_new();
+    lambda_sq = BN_new();
+    EAT1      = BN_new();
+    EARx      = BN_new();
+    EARy      = BN_new();
 
     BN_exp(lambda, point_x, BN_value_two(), bn_ctx);
     BN_nnmod(lambda, lambda, p, bn_ctx);
@@ -1532,7 +1528,7 @@ static inline void sakke_pointMultiply(
     BN_clear_free(EAT1);
     BN_clear_free(EARx);
     BN_clear_free(EARy);
-    BN_CTX_end(bn_ctx);
+    BN_CTX_free(bn_ctx);
 
 } /* sakke_pointMultiply */
 
@@ -1567,13 +1563,11 @@ static inline void sakke_pointsAdd(
     BIGNUM *EARy      = NULL;
     BN_CTX *bn_ctx    = BN_CTX_new();
 
-    BN_CTX_start(bn_ctx);
-
-    lambda    = BN_CTX_get(bn_ctx);
-    lambda_sq = BN_CTX_get(bn_ctx);
-    EAT1      = BN_CTX_get(bn_ctx);
-    EARx      = BN_CTX_get(bn_ctx);
-    EARy      = BN_CTX_get(bn_ctx);
+    lambda    = BN_new();
+    lambda_sq = BN_new();
+    EAT1      = BN_new();
+    EARx      = BN_new();
+    EARy      = BN_new();
 
     BN_sub(lambda, point_1_y, point_2_y);
     BN_sub(EAT1, point_1_x, point_2_x);
@@ -1614,7 +1608,7 @@ static inline void sakke_pointsAdd(
     BN_clear_free(EARx);
     BN_clear_free(EARy);
 
-    BN_CTX_end(bn_ctx);
+    BN_CTX_free(bn_ctx);
 
 } /* sakke_pointsAdd */
 
@@ -1663,7 +1657,6 @@ static inline uint8_t sakke_pointExponent(
     /**************************************************************************/
     /* Cleanup.                                                               */
     /**************************************************************************/
-    //BN_CTX_end(bn_ctx);
     BN_CTX_free(bn_ctx);
 
     return ret_val;
@@ -1828,9 +1821,7 @@ static uint8_t sakke_computeTLPairing(
     BN_clear_free(T_x2_bn);
     BN_clear_free(t_bn);
 
-    if (bn_ctx  != NULL) { 
-      BN_CTX_free(bn_ctx);
-    }
+    BN_CTX_free(bn_ctx);
 
     return ret_val;
 } /* sakke_computeTLPairing */
